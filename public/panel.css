@@ -65,35 +65,53 @@ tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
 .druk-naglowek{display:none}
 
 /* ---------- wydruk podsumowania (A4) ---------- */
-@page{size:A4;margin:12mm 11mm}
+@page{size:A4;margin:15mm 14mm 16mm}
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{background:#fff;font-size:11px}
-  .naglowek-in{padding:10px 0 14px}
-  .naglowek h1{font-size:18px}
-  .naglowek p{font-size:10px}
-  .logo{height:16px}
-  .tresc{padding:10px 0 0;max-width:none}
-  #ekranPanel > .karta, .zakladki, #z-otwarte, #z-lista, .stopka-panel, #alert, #ekranLogin{display:none!important}
-  #z-podsumowanie{display:block!important}
-  .druk-naglowek{display:block;font-size:11px;color:var(--szary);margin:0 0 8px}
+  html,body{background:#fff}
+  body{font-size:10.5px;line-height:1.45}
+  /* nagłówek: zielona karta z oddechem wokół logo */
+  .naglowek{border-radius:12px;overflow:hidden}
+  .naglowek-in,.naglowek-in.szeroki{max-width:none;padding:20px 26px 24px;gap:7px}
+  .logo{height:17px;margin-bottom:6px}
+  .naglowek h1{font-size:19px;letter-spacing:.01em}
+  .naglowek p{font-size:10px;opacity:.9}
+  .tresc,.tresc.szeroki{max-width:none;padding:0}
+  #ekranPanel > .karta,.zakladki,#z-otwarte,#z-lista,.stopka-panel,#alert,#ekranLogin{display:none!important}
+  #z-podsumowanie{display:flex!important;flex-direction:column}
+  .b-obszary{order:1} .b-test{order:2} .b-pytania{order:3} .rozklady{order:4}
+  .druk-naglowek{display:flex;justify-content:space-between;font-size:10.5px;color:var(--szary);margin:14px 4px 14px}
   .druk-naglowek b{color:var(--zielen)}
-  .kafle{grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:6px}
-  .kafel{padding:7px 8px;border-radius:8px}
-  .kafel .liczba{font-size:18px}
-  .kafel .opis{font-size:9px}
-  .kontrola{margin:0 0 10px;font-size:10px}
-  .tabela-wrap{overflow:visible;border-radius:6px}
-  table{font-size:9.5px}
-  th{padding:5px 6px;white-space:normal}
-  td{padding:4px 6px}
-  td:first-child{min-width:0}
-  tr,.r-wiersz{break-inside:avoid}
-  .blok{margin:0 0 12px}
-  .blok h3{font-size:12px;break-after:avoid}
-  .blok .pod{font-size:9.5px;margin-bottom:5px}
-  .rozklad{gap:4px}
-  .r-wiersz{grid-template-columns:minmax(0,1fr) 110px 58px;font-size:9.5px;gap:8px}
-  .r-meta{font-size:8.5px}
-  .legenda{font-size:9px}
+  /* kafle: jeden równy rząd */
+  .kafle{grid-template-columns:repeat(6,1fr);gap:9px;margin:0 0 8px}
+  .kafel{padding:11px 12px;border-radius:10px;text-align:center}
+  .kafel .liczba{font-size:21px}
+  .kafel .opis{font-size:8.8px;margin-top:5px}
+  .kontrola{margin:0 4px 22px;font-size:9.5px;text-align:center}
+  /* sekcje */
+  .blok{margin:0 0 22px;break-inside:avoid}
+  .blok h3{font-size:12.5px;color:var(--zielen);padding-bottom:5px;border-bottom:1.5px solid var(--zielen);margin:0 0 6px;break-after:avoid}
+  .blok .pod{font-size:9.3px;margin:0 0 9px}
+  .b-pytania{break-before:page}
+  .tabela-wrap{overflow:visible;border-radius:8px}
+  table{font-size:9.6px;table-layout:fixed}
+  th{padding:7px 8px;white-space:normal;line-height:1.25}
+  td{padding:6px 8px;white-space:normal}
+  th:first-child,td:first-child{width:46%;min-width:0}
+  .b-pytania th:nth-child(3),.b-pytania th:nth-child(4),.b-pytania td:nth-child(3),.b-pytania td:nth-child(4){width:5.5%}
+  tr{break-inside:avoid}
+  .legenda{font-size:9px;margin-top:8px}
+  .odwr{font-size:8px}
+  /* rozkłady: dwie równe kolumny, szerokie bloki na całą szerokość */
+  .rozklady{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;grid-auto-flow:dense;break-before:page}
+  .rozklady .blok{margin-bottom:16px}
+  .rozklady .blok:last-child{margin-bottom:0}
+  #ekranPanel,.tresc,main{padding-bottom:0!important;margin-bottom:0!important}
+  .rozklady .szeroki{grid-column:1 / -1}
+  .rozklad{gap:5px}
+  .r-wiersz{grid-template-columns:minmax(0,1fr) 78px 52px;font-size:9.6px;gap:10px;break-inside:avoid}
+  .rozklady .blok:not(.szeroki) .r-wiersz{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 46px}
+  .rozklady .szeroki .r-wiersz{grid-template-columns:minmax(0,2.4fr) minmax(0,1fr) 46px}
+  .r-tor{height:8px}
+  .r-meta{font-size:8.5px;margin-top:1px}
 }

@@ -82,10 +82,10 @@
     return '<tr><th>' + esc(pierwsza) + '</th><th>Wszyscy</th>' + ROLE.map(function (r) { return '<th>' + esc(r) + '</th>'; }).join('') + '</tr>';
   }
 
-  function blokRozkladu(q, tytul, opis, klucz) {
+  function blokRozkladu(q, tytul, opis, klucz, szeroki) {
     var r = rozklad(q);
     var max = Math.max.apply(null, Object.keys(r.licz).map(function (k) { return r.licz[k]; }).concat([1]));
-    var h = '<div class="blok"><h3>' + esc(tytul) + '</h3><p class="pod">' + esc(opis) + ' · odpowiedzi: ' + r.odp + '</p><div class="rozklad">';
+    var h = '<div class="blok' + (szeroki ? ' szeroki' : '') + '"><h3>' + esc(tytul) + '</h3><p class="pod">' + esc(opis) + ' · odpowiedzi: ' + r.odp + '</p><div class="rozklad">';
     q.opcje.forEach(function (o, i) {
       var w = typeof o === 'string' ? o : o.w, t = typeof o === 'string' ? o : o.w + ') ' + o.t;
       var n = r.licz[w];
@@ -100,7 +100,7 @@
     var h = '';
     if (!wiersze.length) { el('z-podsumowanie').innerHTML = '<p class="pusto">Nie ma jeszcze żadnej ankiety. Wyniki pojawią się tu po pierwszej wysyłce.</p>'; return; }
 
-    h += '<div class="blok"><h3>Wynik obszarów</h3><p class="pod">Średnia pytań na skali 1–6 po odwróceniu pytań negatywnych — wyższa liczba = lepiej.</p><div class="tabela-wrap"><table>' + naglowekRol('Obszar');
+    h += '<div class="blok b-obszary"><h3>Wynik obszarów</h3><p class="pod">Średnia pytań na skali 1–6 po odwróceniu pytań negatywnych — wyższa liczba = lepiej.</p><div class="tabela-wrap"><table>' + naglowekRol('Obszar');
     ['B', 'C', 'D', 'E'].forEach(function (s) {
       var sek = A.SEKCJE.filter(function (x) { return x.id === s; })[0];
       h += '<tr class="obszar"><td>' + esc(sek.obszar) + '</td>';
@@ -109,7 +109,7 @@
     });
     h += '</table></div><p class="legenda">Progi:<span class="c-ok"></span>≥ 4,5 mocna strona<span class="c-uwaga"></span>3,5–4,49 do poprawy<span class="c-zle"></span>&lt; 3,5 priorytet</p></div>';
 
-    h += '<div class="blok"><h3>Pytania na skali</h3><p class="pod">Średnia po odwróceniu · „nd” = ile osób wybrało „nie dotyczy / nie wiem”.</p><div class="tabela-wrap"><table>' +
+    h += '<div class="blok b-pytania"><h3>Pytania na skali</h3><p class="pod">Średnia po odwróceniu · „nd” = ile osób wybrało „nie dotyczy / nie wiem”.</p><div class="tabela-wrap"><table>' +
       '<tr><th>Pytanie</th><th>Wszyscy</th><th>n</th><th>nd</th>' + ROLE.map(function (r) { return '<th>' + esc(r) + '</th>'; }).join('') + '</tr>';
     A.PYTANIA.filter(function (q) { return q.typ === 'skala'; }).forEach(function (q) {
       var c = sredniaSkali(q, null);
@@ -120,7 +120,7 @@
     });
     h += '</table></div></div>';
 
-    h += '<div class="blok"><h3>Test wiedzy a deklaracja</h3><p class="pod">Wysoka deklaracja C1 przy słabym teście = realna luka do szkolenia.</p><div class="tabela-wrap"><table>' + naglowekRol('Miara');
+    h += '<div class="blok b-test"><h3>Test wiedzy a deklaracja</h3><p class="pod">Wysoka deklaracja C1 przy słabym teście = realna luka do szkolenia.</p><div class="tabela-wrap"><table>' + naglowekRol('Miara');
     ['C4', 'C5'].forEach(function (id) {
       var q = A.pytanie(id);
       h += '<tr><td><b>' + id + '</b> prawidłowa „' + q.poprawna + '”: ' + esc(q.tekst) + '</td>';
@@ -131,12 +131,14 @@
     [null].concat(ROLE).forEach(function (r) { var x = sredniaSkali(A.pytanie('C1'), r).sr; h += '<td class="' + kolor(x) + '">' + liczba(x) + '</td>'; });
     h += '</tr></table></div></div>';
 
+    h += '<div class="rozklady">';
     h += blokRozkladu(A.pytanie('A2'), 'Częstotliwość korzystania (A2)', 'Ile osób faktycznie pracuje z planogramem');
     h += blokRozkladu(A.pytanie('A3'), 'Rezultat: koncepty wdrożone w 6 miesiącach (A3)', 'Miara rezultatu, nie deklaracji');
     h += blokRozkladu(A.pytanie('A4'), 'Kontrola zgodności po montażu (A4)', 'Czy planogram żyje po montażu');
-    h += blokRozkladu(A.pytanie('G1'), 'Bariery (G1) — szkolenie czy system', 'Każdy mógł wskazać maksymalnie dwie; procent liczony od liczby osób', A.BARIERY_KLUCZ);
-    h += blokRozkladu(A.pytanie('F1'), 'Problemy techniczne (F1)', 'Lista dla Działu Wizualizacji; procent liczony od liczby osób');
+    h += blokRozkladu(A.pytanie('G1'), 'Bariery (G1) — szkolenie czy system', 'Każdy mógł wskazać maksymalnie dwie; procent liczony od liczby osób', A.BARIERY_KLUCZ, true);
     h += blokRozkladu(A.pytanie('H2'), 'Tematy szkolenia wskazane przez zespół (H2)', 'Procent liczony od liczby osób');
+    h += blokRozkladu(A.pytanie('F1'), 'Problemy techniczne (F1)', 'Lista dla Działu Wizualizacji; procent liczony od liczby osób', null, true);
+    h += '</div>';
     el('z-podsumowanie').innerHTML = h;
   }
 
@@ -250,7 +252,7 @@
   el('drukuj').addEventListener('click', function () {
     if (!wiersze.length) { pokazAlert('Nie ma jeszcze żadnej ankiety do wydrukowania.', 'info'); return; }
     var teraz = new Date().toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    el('drukNaglowek').innerHTML = 'Stan na <b>' + esc(teraz) + '</b> · ankiet: <b>' + wiersze.length + '</b> · Dział Wizualizacji i Rozwoju Sieci';
+    el('drukNaglowek').innerHTML = '<span>Stan na <b>' + esc(teraz) + '</b></span><span>Liczba ankiet: <b>' + wiersze.length + '</b></span>';
     window.print();
   });
   el('kopiuj').addEventListener('click', function () {
