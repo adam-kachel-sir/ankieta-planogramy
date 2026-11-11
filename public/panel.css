@@ -60,3 +60,40 @@ tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
 .logowanie{max-width:380px;margin:30px auto}
 .logowanie input{width:100%;border:1.5px solid var(--linia);border-radius:10px;padding:12px;font-size:16px;margin:8px 0 12px}
 @media (max-width:560px){.r-wiersz{grid-template-columns:minmax(0,1fr) 70px 56px}}
+.stopka-panel{font-size:12px;color:var(--szary);margin:28px 2px 0;text-align:right}
+.stopka-panel a{color:var(--szary)}
+.druk-naglowek{display:none}
+
+/* ---------- wydruk podsumowania (A4) ---------- */
+@page{size:A4;margin:12mm 11mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:11px}
+  .naglowek-in{padding:10px 0 14px}
+  .naglowek h1{font-size:18px}
+  .naglowek p{font-size:10px}
+  .logo{height:16px}
+  .tresc{padding:10px 0 0;max-width:none}
+  #ekranPanel > .karta, .zakladki, #z-otwarte, #z-lista, .stopka-panel, #alert, #ekranLogin{display:none!important}
+  #z-podsumowanie{display:block!important}
+  .druk-naglowek{display:block;font-size:11px;color:var(--szary);margin:0 0 8px}
+  .druk-naglowek b{color:var(--zielen)}
+  .kafle{grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:6px}
+  .kafel{padding:7px 8px;border-radius:8px}
+  .kafel .liczba{font-size:18px}
+  .kafel .opis{font-size:9px}
+  .kontrola{margin:0 0 10px;font-size:10px}
+  .tabela-wrap{overflow:visible;border-radius:6px}
+  table{font-size:9.5px}
+  th{padding:5px 6px;white-space:normal}
+  td{padding:4px 6px}
+  td:first-child{min-width:0}
+  tr,.r-wiersz{break-inside:avoid}
+  .blok{margin:0 0 12px}
+  .blok h3{font-size:12px;break-after:avoid}
+  .blok .pod{font-size:9.5px;margin-bottom:5px}
+  .rozklad{gap:4px}
+  .r-wiersz{grid-template-columns:minmax(0,1fr) 110px 58px;font-size:9.5px;gap:8px}
+  .r-meta{font-size:8.5px}
+  .legenda{font-size:9px}
+}

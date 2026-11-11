@@ -247,6 +247,12 @@
   });
   el('wyloguj').addEventListener('click', function () { api('/api/wyloguj', { method: 'POST' }).then(pokazLogin); });
   el('odswiez').addEventListener('click', wczytaj);
+  el('drukuj').addEventListener('click', function () {
+    if (!wiersze.length) { pokazAlert('Nie ma jeszcze żadnej ankiety do wydrukowania.', 'info'); return; }
+    var teraz = new Date().toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    el('drukNaglowek').innerHTML = 'Stan na <b>' + esc(teraz) + '</b> · ankiet: <b>' + wiersze.length + '</b> · Dział Wizualizacji i Rozwoju Sieci';
+    window.print();
+  });
   el('kopiuj').addEventListener('click', function () {
     var pole = el('link'), b = el('kopiuj');
     var gotowe = function () { b.textContent = 'Skopiowano'; setTimeout(function () { b.textContent = 'Kopiuj link'; }, 1800); };

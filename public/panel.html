@@ -44,13 +44,14 @@
         <div class="przyciski">
           <button class="przycisk maly jasny" type="button" id="odswiez">Odśwież</button>
           <a class="przycisk maly" href="/api/eksport.xlsx" id="xlsx">Pobierz wyniki do Excela</a>
-          <a class="przycisk maly jasny" href="/api/eksport.csv" id="csv" title="Surowe dane bez formatowania">CSV</a>
+          <button class="przycisk maly" type="button" id="drukuj">Drukuj podsumowanie</button>
           <button class="przycisk maly jasny" type="button" id="wyloguj">Wyloguj</button>
         </div>
       </div>
       <p class="legenda" id="stan" style="margin-left:0"></p>
     </div>
 
+    <div class="druk-naglowek" id="drukNaglowek"></div>
     <div class="kafle" id="kafle"></div>
     <div class="kontrola" id="kontrola"></div>
 
@@ -63,6 +64,8 @@
     <div id="z-podsumowanie"></div>
     <div id="z-otwarte" class="ukryte"></div>
     <div id="z-lista" class="ukryte"></div>
+
+    <p class="stopka-panel">Surowe dane bez formatowania, do własnych analiz: <a href="/api/eksport.csv">pobierz plik CSV</a></p>
   </section>
 </main>
 
