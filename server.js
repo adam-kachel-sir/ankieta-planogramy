@@ -9,7 +9,9 @@
      SESJA_SEKRET       — opcjonalnie; klucz do podpisu sesji panelu */
 const path = require('path');
 const crypto = require('crypto');
+const fs = require('fs');
 const express = require('express');
+const JSZip = require('jszip');
 const { Pool } = require('pg');
 const A = require('./shared/pytania.js');
 
@@ -198,6 +200,61 @@ app.get('/api/eksport.csv', wymagajLogowania, async (req, res) => {
   }
 });
 
+/* ---------- eksport do Excela w standardzie Stalco ----------
+   Bierzemy gotowy szablon (logo, zieleń, Montserrat, formuły Podsumowania) i wpisujemy
+   odpowiedzi w arkusz „Wyniki” od wiersza 9 — bez przebudowy pliku, więc wygląd zostaje 1:1.
+   Formuły przeliczają się przy otwarciu w Excelu (fullCalcOnLoad w szablonie). */
+const SZABLON = path.join(__dirname, 'szablony', 'Ankieta_planogramy_Stalco_2026.xlsx');
+const WYNIKI_PIERWSZY = 9, WYNIKI_OSTATNI = 208;
+
+function litera(n) { let s = ''; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+function xmlTekst(s) {
+  return String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function plikWynikow(rows) {
+  const zip = await JSZip.loadAsync(fs.readFileSync(SZABLON));
+  const wbXml = await zip.file('xl/workbook.xml').async('string');
+  const relsXml = await zip.file('xl/_rels/workbook.xml.rels').async('string');
+  const rid = (wbXml.match(/<sheet [^>]*name="Wyniki"[^>]*r:id="([^"]+)"/) || [])[1];
+  const cel = rid && (relsXml.match(new RegExp('<Relationship[^>]*Id="' + rid + '"[^>]*Target="([^"]+)"')) ||
+                      relsXml.match(new RegExp('<Relationship[^>]*Target="([^"]+)"[^>]*Id="' + rid + '"')) || [])[1];
+  if (!cel) throw new Error('Nie znalazłem arkusza Wyniki w szablonie');
+  const sciezka = 'xl/' + cel.replace(/^\/?xl\//, '');
+  let xml = await zip.file(sciezka).async('string');
+  rows.slice(0, WYNIKI_OSTATNI - WYNIKI_PIERWSZY + 1).forEach((r, i) => {
+    const nr = WYNIKI_PIERWSZY + i;
+    const wartosci = A.wierszCsv(i + 1, r.dane || {}, '').slice(1, 28); // kolumny B..AB, bez Lp i daty
+    wartosci.forEach((v, j) => {
+      if (v === '' || v === null || v === undefined) return;
+      const ref = litera(j + 2) + nr;
+      const wzor = new RegExp('<c r="' + ref + '"( s="\\d+")?( t="n")?\\s*(?:/>|></c>)');
+      const nowa = typeof v === 'number'
+        ? '<c r="' + ref + '"$1><v>' + v + '</v></c>'
+        : '<c r="' + ref + '"$1 t="inlineStr"><is><t xml:space="preserve">' + xmlTekst(v) + '</t></is></c>';
+      xml = xml.replace(wzor, nowa);
+    });
+  });
+  zip.file(sciezka, xml);
+  return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+}
+
+app.get('/api/eksport.xlsx', wymagajLogowania, async (req, res) => {
+  try {
+    const rows = await db.wszystkie();
+    const bufor = await plikWynikow(rows);
+    const dzis = new Date().toISOString().slice(0, 10);
+    res.set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.set('Content-Disposition', `attachment; filename="Ankieta_planogramy_wyniki_${dzis}.xlsx"`);
+    if (rows.length > WYNIKI_OSTATNI - WYNIKI_PIERWSZY + 1) res.set('X-Uwaga', 'Ponad 200 ankiet - w Excelu pierwsze 200, pelna lista w CSV');
+    res.send(bufor);
+  } catch (e) {
+    console.error('Eksport xlsx:', e);
+    res.status(500).send('Błąd eksportu do Excela.');
+  }
+});
+
 async function start() {
   if (!DB_URL) { console.error('BRAK DATABASE_URL — podepnij bazę PostgreSQL w Railway (zmienna DATABASE_URL).'); process.exit(1); }
   for (let proba = 1; ; proba++) {
@@ -209,6 +266,7 @@ async function start() {
     }
   }
   app.listen(PORT, () => {
+  if (!fs.existsSync(SZABLON)) console.warn('UWAGA: brak szablonu Excela ' + SZABLON + ' — eksport .xlsx nie zadziała.');
     console.log(`Ankieta planogramy działa na porcie ${PORT}`);
     if (!HASLO) console.warn('UWAGA: brak PANEL_HASLO — panel wyników jest zablokowany.');
     if (!KOD) console.warn('Info: brak ANKIETA_KOD — formularz przyjmuje odpowiedzi z samego adresu strony.');

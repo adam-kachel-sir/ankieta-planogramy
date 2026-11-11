@@ -55,11 +55,9 @@ Po zakończeniu projektu: pobierz CSV, a potem możesz usunąć projekt w Railwa
 ---
 
 ## Wyniki do Excela
-1. Panel → **Pobierz CSV do Excela**.
-2. Otwórz plik CSV w Excelu (polski Excel sam rozdzieli kolumny po średniku).
-3. Zaznacz wiersze z danymi (od wiersza 2, kolumny A–AB), skopiuj.
-4. W pliku `Ankieta_planogramy_Stalco_2026.xlsx` → arkusz **Wyniki** → kliknij komórkę **A9** → wklej.
-5. Arkusz **Podsumowanie** przelicza się sam. Kolumny CSV są 1:1 z arkuszem Wyniki; ostatnia kolumna (data wysłania) wypada poza tabelę i nie wpływa na wyniki.
+- Panel → **Pobierz wyniki do Excela** — gotowy plik w standardzie Stalco (logo, zieleń, Montserrat): arkusze Ankieta, Weryfikacja, Klucz, **Wyniki** (już wypełnione odpowiedziami) i **Podsumowanie** (przelicza się samo po otwarciu w Excelu). Nic nie trzeba wklejać.
+- Szablon pliku: `szablony/Ankieta_planogramy_Stalco_2026.xlsx` — serwer wpisuje odpowiedzi w arkusz Wyniki od wiersza 9 (maks. 200 ankiet; przy większej liczbie pełna lista jest w CSV).
+- Przycisk **CSV** — surowe dane bez formatowania (kolumny 1:1 z arkuszem Wyniki + data wysłania), np. do własnych analiz.
 
 ---
 
