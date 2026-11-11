@@ -72,6 +72,11 @@
     });
     var nie = wiersze.filter(function (w) { return w.dane.A2 === A.NIE_KORZYSTAM; }).length;
     html += '<div class="kafel"><div class="liczba">' + nie + '</div><div class="opis">nie korzysta z planogramów</div></div>';
+    var czasy = wiersze.map(function (w) { return w.czas; }).filter(function (c) { return typeof c === 'number' && c >= 0; }).sort(function (a, b) { return a - b; });
+    var mediana = czasy.length ? (czasy.length % 2 ? czasy[(czasy.length - 1) / 2] : (czasy[czasy.length / 2 - 1] + czasy[czasy.length / 2]) / 2) : null;
+    var szybkie = wiersze.filter(function (w) { return A.czyszybko(w.czas, w.dane); }).length;
+    html += '<div class="kafel"><div class="liczba">' + (mediana === null ? '—' : A.formatCzas(mediana)) + '</div><div class="opis">typowy czas wypełnienia (mediana, min:s)</div></div>';
+    html += '<div class="kafel' + (szybkie ? ' uwaga' : '') + '"><div class="liczba">' + szybkie + '</div><div class="opis">wypełnione bardzo szybko (poniżej ' + A.SZYBKO_SEK + ' s na pytanie)</div></div>';
     el('kafle').innerHTML = html;
     var k = el('kontrola');
     if (sumaRol === wiersze.length) { k.className = 'kontrola ok'; k.textContent = 'Kontrola: suma ról = liczba ankiet (' + wiersze.length + '), zgadza się.'; }
@@ -172,7 +177,9 @@
   }
 
   function szczegoly(w) {
-    var h = '<div class="szczegoly"><div class="szcz-nag">Ankieta nr ' + w.id + ' · wysłana ' + data(w.utworzono) + '</div>';
+    var t = A.tempo(w.czas, w.dane);
+    var h = '<div class="szczegoly"><div class="szcz-nag">Ankieta nr ' + w.id + ' · wysłana ' + data(w.utworzono) +
+      (typeof w.czas === 'number' ? ' · czas wypełnienia ' + A.formatCzas(w.czas) + ' (' + liczba(t, 1) + ' s na pytanie)' + (A.czyszybko(w.czas, w.dane) ? ' <span class="znacznik-szybko">szybko</span>' : '') : '') + '</div>';
     A.SEKCJE.forEach(function (s) {
       var pyt = A.PYTANIA.filter(function (q) { return q.s === s.id; });
       h += '<div class="szcz-sekcja">' + s.id + ' · ' + esc(s.tytul) + '</div>';
@@ -198,14 +205,15 @@
   var otwarta = null;
   function lista() {
     var h = '<div class="blok"><h3>Wszystkie ankiety</h3><p class="pod">Kliknij <b>Pokaż</b>, żeby zobaczyć ankietę w całości. Usuń tylko ankiety testowe — usunięcia nie da się cofnąć.</p><div class="tabela-wrap"><table>' +
-      '<tr><th>Nr</th><th>Data</th><th>Rola</th><th>Częstotliwość</th><th>Wdrożenia</th><th></th><th></th></tr>';
-    if (!wiersze.length) h += '<tr><td colspan="7" class="lewy pusto">Brak ankiet.</td></tr>';
+      '<tr><th>Nr</th><th>Data</th><th>Rola</th><th>Częstotliwość</th><th>Wdrożenia</th><th>Czas</th><th></th><th></th></tr>';
+    if (!wiersze.length) h += '<tr><td colspan="8" class="lewy pusto">Brak ankiet.</td></tr>';
     wiersze.slice().reverse().forEach(function (w) {
       var jest = otwarta === w.id;
       h += '<tr' + (jest ? ' class="aktywny"' : '') + '><td class="lewy" style="min-width:0">' + w.id + '</td><td>' + data(w.utworzono) + '</td><td>' + esc(w.dane.A1) + '</td><td>' + esc(w.dane.A2) + '</td><td>' + esc(w.dane.A3 || '—') + '</td>' +
+        '<td>' + (typeof w.czas === 'number' ? A.formatCzas(w.czas) + (A.czyszybko(w.czas, w.dane) ? ' <span class="znacznik-szybko">szybko</span>' : '') : '—') + '</td>' +
         '<td><button class="pokaz" type="button" data-id="' + w.id + '">' + (jest ? 'Zwiń' : 'Pokaż') + '</button></td>' +
         '<td><button class="usun" type="button" data-id="' + w.id + '">Usuń</button></td></tr>';
-      if (jest) h += '<tr class="szcz-tr"><td colspan="7">' + szczegoly(w) + '</td></tr>';
+      if (jest) h += '<tr class="szcz-tr"><td colspan="8">' + szczegoly(w) + '</td></tr>';
     });
     h += '</table></div></div>';
     el('z-lista').innerHTML = h;

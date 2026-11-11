@@ -28,12 +28,15 @@ const db = {
       wersja INTEGER NOT NULL DEFAULT 2,
       dane JSONB NOT NULL)`);
     await pool.query('CREATE INDEX IF NOT EXISTS odpowiedz_ankieta_idx ON odpowiedz (ankieta)');
+    await pool.query('ALTER TABLE odpowiedz ADD COLUMN IF NOT EXISTS czas_aktywny INTEGER');
+    await pool.query('ALTER TABLE odpowiedz ADD COLUMN IF NOT EXISTS czas_calkowity INTEGER');
   },
-  async dodaj(dane) {
-    await pool.query('INSERT INTO odpowiedz (ankieta, wersja, dane) VALUES ($1, $2, $3)', [A.ID, A.WERSJA, JSON.stringify(dane)]);
+  async dodaj(dane, czas) {
+    await pool.query('INSERT INTO odpowiedz (ankieta, wersja, dane, czas_aktywny, czas_calkowity) VALUES ($1, $2, $3, $4, $5)',
+      [A.ID, A.WERSJA, JSON.stringify(dane), czas.aktywny, czas.calkowity]);
   },
   async wszystkie() {
-    const r = await pool.query('SELECT id, utworzono, dane FROM odpowiedz WHERE ankieta = $1 ORDER BY id', [A.ID]);
+    const r = await pool.query('SELECT id, utworzono, dane, czas_aktywny, czas_calkowity FROM odpowiedz WHERE ankieta = $1 ORDER BY id', [A.ID]);
     return r.rows;
   },
   async usun(id) {
@@ -132,7 +135,9 @@ app.post('/api/odpowiedz', async (req, res) => {
     if (zaDuzo(req.ip)) return res.status(429).json({ blad: 'Zbyt wiele wysyłek z tego urządzenia. Spróbuj za godzinę.' });
     const w = A.waliduj(body.dane);
     if (!w.ok) return res.status(400).json({ blad: 'Uzupełnij brakujące odpowiedzi.', bledy: w.bledy });
-    await db.dodaj(w.czyste);
+    const c = body.czas || {};
+    const sek = v => (Number.isInteger(v) && v >= 0 && v <= 86400) ? v : null;
+    await db.dodaj(w.czyste, { aktywny: sek(c.aktywny), calkowity: sek(c.calkowity) });
     res.json({ ok: true });
   } catch (e) {
     console.error('Zapis odpowiedzi:', e);
@@ -168,7 +173,7 @@ app.get('/api/wyniki', wymagajLogowania, async (req, res) => {
     const rows = await db.wszystkie();
     const baza = `${req.protocol}://${req.get('host')}/`;
     res.json({
-      wiersze: rows.map(r => ({ id: r.id, utworzono: r.utworzono, dane: r.dane })),
+      wiersze: rows.map(r => ({ id: r.id, utworzono: r.utworzono, dane: r.dane, czas: r.czas_aktywny, czasCalkowity: r.czas_calkowity })),
       link: KOD ? `${baza}?k=${encodeURIComponent(KOD)}` : baza,
       zamknieta: ZAMKNIETA
     });
@@ -201,7 +206,7 @@ app.get('/api/eksport.csv', wymagajLogowania, async (req, res) => {
     const linie = [A.naglowkiCsv().map(poleCsv).join(';')];
     rows.forEach((r, i) => {
       const d = new Date(r.utworzono).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
-      linie.push(A.wierszCsv(i + 1, r.dane || {}, d).map(poleCsv).join(';'));
+      linie.push(A.wierszCsv(i + 1, r.dane || {}, d, r.czas_aktywny).map(poleCsv).join(';'));
     });
     const dzis = new Date().toISOString().slice(0, 10);
     res.set('Content-Type', 'text/csv; charset=utf-8');
@@ -238,7 +243,7 @@ async function plikWynikow(rows) {
   let xml = await zip.file(sciezka).async('string');
   rows.slice(0, WYNIKI_OSTATNI - WYNIKI_PIERWSZY + 1).forEach((r, i) => {
     const nr = WYNIKI_PIERWSZY + i;
-    const wartosci = A.wierszCsv(i + 1, r.dane || {}, '').slice(1, 28); // kolumny B..AB, bez Lp i daty
+    const wartosci = A.wierszCsv(i + 1, r.dane || {}, '', r.czas_aktywny).slice(1, 30); // B..AB + AC czas + AD tempo, bez Lp i daty
     wartosci.forEach((v, j) => {
       if (v === '' || v === null || v === undefined) return;
       const ref = litera(j + 2) + nr;

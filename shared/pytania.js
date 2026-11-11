@@ -161,10 +161,25 @@
     'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'F1', 'G1', 'H2', 'F2', 'G2', 'H1'];
 
   function naglowkiCsv() {
-    return ['Lp'].concat(KOLEJNOSC_CSV.map(function (id) { return pytanie(id).csv || id; })).concat(['Data wysłania']);
+    return ['Lp'].concat(KOLEJNOSC_CSV.map(function (id) { return pytanie(id).csv || id; })).concat(['Czas wypełniania (min:s)', 'Tempo (s / pytanie)', 'Data wysłania']);
   }
 
-  function wierszCsv(lp, dane, data) {
+  /* Czas wypełniania: liczony tylko, gdy ankieta jest na ekranie. Tempo = sekundy na jedno pokazane pytanie. */
+  var SZYBKO_SEK = 5;
+  function liczbaPytan(dane) { return PYTANIA.filter(function (q) { return widoczne(q, dane || {}); }).length; }
+  function tempo(czasSek, dane) {
+    if (typeof czasSek !== 'number' || czasSek < 0) return null;
+    return Math.round(czasSek / Math.max(1, liczbaPytan(dane)) * 10) / 10;
+  }
+  function czyszybko(czasSek, dane) { var t = tempo(czasSek, dane); return t !== null && t < SZYBKO_SEK; }
+  function formatCzas(sek) {
+    if (typeof sek !== 'number' || sek < 0) return '';
+    var m = Math.floor(sek / 60), s = Math.round(sek % 60);
+    if (s === 60) { m++; s = 0; }
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function wierszCsv(lp, dane, data, czasSek) {
     var w = [lp];
     KOLEJNOSC_CSV.forEach(function (id) {
       var v = dane[id];
@@ -172,6 +187,9 @@
       else if (Array.isArray(v)) w.push(v.join(' | '));
       else w.push(v);
     });
+    var t = tempo(czasSek, dane);
+    w.push(typeof czasSek === 'number' ? formatCzas(czasSek) : '');
+    w.push(t === null ? '' : t);
     w.push(data || '');
     return w;
   }
@@ -181,6 +199,7 @@
     SEKCJE: SEKCJE, PYTANIA: PYTANIA, SKALA: SKALA, ROLE: ROLE,
     BARIERY_KLUCZ: BARIERY_KLUCZ, MAKS_TEKST: MAKS_TEKST,
     pytanie: pytanie, widoczne: widoczne, waliduj: waliduj,
-    naglowkiCsv: naglowkiCsv, wierszCsv: wierszCsv
+    naglowkiCsv: naglowkiCsv, wierszCsv: wierszCsv,
+    SZYBKO_SEK: SZYBKO_SEK, liczbaPytan: liczbaPytan, tempo: tempo, czyszybko: czyszybko, formatCzas: formatCzas
   };
 });

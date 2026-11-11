@@ -3,6 +3,7 @@
   var A = window.ANKIETA;
   var KLUCZ_SZKIC = 'ankieta-' + A.ID + '-szkic';
   var KLUCZ_WYSLANA = 'ankieta-' + A.ID + '-wyslana';
+  var KLUCZ_CZAS = 'ankieta-' + A.ID + '-czas';
   var kod = new URLSearchParams(location.search).get('k') || '';
   var dane = {};
   var el = function (id) { return document.getElementById(id); };
@@ -80,6 +81,7 @@
       var ta = h('textarea', { maxlength: String(A.MAKS_TEKST), placeholder: 'Napisz kilka zdań…', 'aria-label': q.tekst });
       var lic = h('div', { class: 'licznik', text: '0 / ' + A.MAKS_TEKST });
       ta.addEventListener('input', function () {
+        startCzasu();
         dane[q.id] = ta.value;
         lic.textContent = ta.value.length + ' / ' + A.MAKS_TEKST;
         if (ta.value.trim()) karta.classList.remove('brak');
@@ -105,6 +107,7 @@
 
   /* ---------- logika wyboru ---------- */
   function wybierz(q, w, wielokrotny) {
+    startCzasu();
     if (wielokrotny) {
       var lista = Array.isArray(dane[q.id]) ? dane[q.id].slice() : [];
       var i = lista.indexOf(w);
@@ -223,11 +226,13 @@
     przycisk.textContent = 'Wysyłam…';
     var czyste = {};
     A.PYTANIA.forEach(function (q) { if (A.widoczne(q, dane) && odpowiedziano(q)) czyste[q.id] = dane[q.id]; });
-    fetch('/api/odpowiedz', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: kod, dane: czyste }) })
+    fetch('/api/odpowiedz', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ k: kod, dane: czyste, czas: odczytCzasu() }) })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, j: j }; }); })
       .then(function (wynik) {
         if (wynik.status === 200 && wynik.j.ok) {
           usun(KLUCZ_SZKIC);
+          usun(KLUCZ_CZAS);
+          czas.stop = true;
           zapisz(KLUCZ_WYSLANA, String(Date.now()));
           ekran('ekranKoniec');
           window.scrollTo(0, 0);
@@ -244,12 +249,37 @@
       .then(function () { przycisk.disabled = false; przycisk.textContent = 'Wyślij ankietę'; });
   }
 
+  /* ---------- zegar ----------
+     Startuje przy pierwszej odpowiedzi. Liczy tylko sekundy, gdy ankieta jest na ekranie
+     (odłożony telefon albo inna aplikacja = zegar stoi). Stan przeżywa odświeżenie strony. */
+  var czas = { start: null, aktywne: 0, stop: false };
+  (function () {
+    try { var c = JSON.parse(czytaj(KLUCZ_CZAS) || 'null'); if (c && c.start) { czas.start = c.start; czas.aktywne = c.aktywne || 0; } } catch (e) { }
+  })();
+  var IKONA_ZEGARA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  function pokazCzas() { el('czasTxt').innerHTML = czas.start ? IKONA_ZEGARA + A.formatCzas(czas.aktywne) : ''; }
+  function zapiszCzas() { zapisz(KLUCZ_CZAS, JSON.stringify({ start: czas.start, aktywne: czas.aktywne })); }
+  function startCzasu() { if (!czas.start && !czas.stop) { czas.start = Date.now(); zapiszCzas(); pokazCzas(); } }
+  function odczytCzasu() {
+    if (!czas.start) return {};
+    return { aktywny: Math.round(czas.aktywne), calkowity: Math.round((Date.now() - czas.start) / 1000) };
+  }
+  setInterval(function () {
+    if (!czas.start || czas.stop || document.hidden) return;
+    czas.aktywne++;
+    pokazCzas();
+    zapiszCzas();
+  }, 1000);
+  document.addEventListener('visibilitychange', function () { if (document.hidden && czas.start) zapiszCzas(); });
+  window.addEventListener('pagehide', function () { if (czas.start && !czas.stop) zapiszCzas(); });
+
   /* ---------- start ---------- */
   zbuduj();
   wczytajSzkic();
   odswiez(false);
+  pokazCzas();
   el('wyslij').addEventListener('click', wyslij);
-  el('nowyFormularz').addEventListener('click', function () { usun(KLUCZ_WYSLANA); dane = {}; usun(KLUCZ_SZKIC); location.reload(); });
+  el('nowyFormularz').addEventListener('click', function () { usun(KLUCZ_WYSLANA); dane = {}; usun(KLUCZ_SZKIC); usun(KLUCZ_CZAS); location.reload(); });
 
   if (czytaj(KLUCZ_WYSLANA)) ekran('ekranJuz');
 

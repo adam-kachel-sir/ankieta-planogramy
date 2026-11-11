@@ -55,7 +55,9 @@ textarea:focus,.opcja:focus-visible,.skala-przyciski button:focus-visible,.nd:fo
 .pasek-dol{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:1px solid var(--linia);box-shadow:0 -6px 18px rgba(0,40,20,.06);z-index:10}
 .pasek-dol-in{max-width:760px;margin:0 auto;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px}
 .postep{flex:1;min-width:0}
-.postep-txt{font-size:12px;color:var(--szary);margin-bottom:5px}
+.postep-txt{font-size:12px;color:var(--szary);margin-bottom:5px;display:flex;justify-content:space-between;gap:10px}
+.czas{font-variant-numeric:tabular-nums;color:#8A9A90;display:inline-flex;align-items:center;gap:4px}
+.czas svg{width:11px;height:11px}
 .postep-tor{height:6px;border-radius:6px;background:var(--jasna);overflow:hidden}
 .postep-wyp{height:100%;width:0;background:linear-gradient(90deg,var(--zielen),var(--zielen2));transition:width .25s}
 .przycisk{border:0;border-radius:12px;background:var(--zielen);color:#fff;font-weight:700;padding:13px 22px;font-size:15px;cursor:pointer;white-space:nowrap}
