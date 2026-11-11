@@ -1,0 +1,80 @@
+/* Stalco — jasny motyw, zieleń marki, Montserrat */
+:root{
+  --zielen:#006241; --zielen2:#2F9E57; --limonka:#8DC63F; --tlo:#F4F7F5; --karta:#FFFFFF;
+  --tekst:#1E2B24; --szary:#5B6B62; --linia:#D7E3DB; --jasna:#E8F3EC;
+  --blad:#B3402E; --blad-tlo:#FBEAE6; --ok-tlo:#CFEBD9; --uwaga-tlo:#FFF1C7; --zle-tlo:#F9D5CF;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--tlo);color:var(--tekst);font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:16px;line-height:1.5}
+button,input,textarea{font:inherit;color:inherit}
+.naglowek{background:var(--zielen);color:#fff;position:relative}
+.naglowek::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--zielen2),var(--limonka))}
+.naglowek-in{max-width:760px;margin:0 auto;padding:18px 16px 22px;display:flex;flex-direction:column;gap:10px}
+.naglowek-in.szeroki{max-width:1180px}
+.logo{height:22px;width:auto;display:block;align-self:flex-start}
+.naglowek h1{margin:0;font-size:22px;line-height:1.25;font-weight:700}
+.naglowek p{margin:0;font-size:13px;opacity:.85}
+.tresc{max-width:760px;margin:0 auto;padding:16px 16px 120px}
+.tresc.szeroki{max-width:1180px}
+.karta{background:var(--karta);border:1px solid var(--linia);border-radius:var(--r);padding:18px 16px;margin:0 0 14px}
+.wstep{font-size:15px}
+.wstep strong{color:var(--zielen)}
+.sekcja-tytul{display:flex;align-items:center;gap:10px;margin:26px 2px 10px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--zielen)}
+.sekcja-tytul .lit{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--zielen);color:#fff;font-size:13px;letter-spacing:0}
+.pyt{scroll-margin-top:90px}
+.pyt .nr{font-size:12px;font-weight:700;color:var(--zielen2);margin-bottom:2px}
+.pyt .txt{font-weight:600;font-size:16px;margin:0 0 4px}
+.pyt .pod{font-size:13px;color:var(--szary);margin:0 0 10px}
+.pyt.brak{border-color:var(--blad);background:var(--blad-tlo)}
+.pyt .komunikat{display:none;color:var(--blad);font-size:13px;font-weight:600;margin-top:8px}
+.pyt.brak .komunikat{display:block}
+.opcje{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.opcja{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--linia);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:15px;line-height:1.35;transition:border-color .12s,background .12s}
+.opcja .znak{flex:0 0 20px;height:20px;border:2px solid #9DB3A6;border-radius:50%;margin-top:1px;display:grid;place-items:center}
+.opcja.kw .znak{border-radius:6px}
+.opcja[aria-checked="true"]{border-color:var(--zielen2);background:var(--jasna)}
+.opcja[aria-checked="true"] .znak{border-color:var(--zielen);background:var(--zielen)}
+.opcja[aria-checked="true"] .znak::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.opcja.kw[aria-checked="true"] .znak::after{width:10px;height:6px;border-radius:0;background:none;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.opcja .lit{font-weight:700;color:var(--zielen);margin-right:2px}
+.opcja[disabled]{opacity:.45;cursor:not-allowed}
+.skala{margin-top:12px}
+.skala-przyciski{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.skala-przyciski button{height:48px;border:1.5px solid var(--linia);border-radius:10px;background:#fff;font-weight:700;font-size:17px;cursor:pointer}
+.skala-przyciski button[aria-checked="true"]{background:var(--zielen);border-color:var(--zielen);color:#fff}
+.skala-opis{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--szary);margin-top:6px;line-height:1.25}
+.skala-opis span:last-child{text-align:right}
+.skala-wybor{font-size:13px;color:var(--zielen);font-weight:600;min-height:20px;margin-top:6px}
+.nd{margin-top:8px;width:100%;height:42px;border:1.5px dashed #B9C9BF;border-radius:10px;background:#fff;font-size:14px;color:var(--szary);cursor:pointer}
+.nd[aria-checked="true"]{border-style:solid;border-color:var(--szary);background:#EEF2EF;color:var(--tekst);font-weight:600}
+textarea{width:100%;min-height:110px;border:1.5px solid var(--linia);border-radius:12px;padding:12px;font-size:15px;resize:vertical;background:#fff}
+textarea:focus,.opcja:focus-visible,.skala-przyciski button:focus-visible,.nd:focus-visible,.przycisk:focus-visible{outline:3px solid rgba(47,158,87,.35);outline-offset:2px;border-color:var(--zielen2)}
+.licznik{font-size:12px;color:var(--szary);text-align:right;margin-top:4px}
+.pasek-dol{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:1px solid var(--linia);box-shadow:0 -6px 18px rgba(0,40,20,.06);z-index:10}
+.pasek-dol-in{max-width:760px;margin:0 auto;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px}
+.postep{flex:1;min-width:0}
+.postep-txt{font-size:12px;color:var(--szary);margin-bottom:5px}
+.postep-tor{height:6px;border-radius:6px;background:var(--jasna);overflow:hidden}
+.postep-wyp{height:100%;width:0;background:linear-gradient(90deg,var(--zielen),var(--zielen2));transition:width .25s}
+.przycisk{border:0;border-radius:12px;background:var(--zielen);color:#fff;font-weight:700;padding:13px 22px;font-size:15px;cursor:pointer;white-space:nowrap}
+.przycisk:hover{background:#00553A}
+.przycisk[disabled]{opacity:.6;cursor:progress}
+.przycisk.jasny{background:#fff;color:var(--zielen);border:1.5px solid var(--zielen2)}
+.przycisk.maly{padding:9px 14px;font-size:13px;border-radius:10px}
+.alert{border-radius:12px;padding:12px 14px;font-size:14px;margin:0 0 14px;display:none}
+.alert.pokaz{display:block}
+.alert.zly{background:var(--blad-tlo);color:var(--blad);border:1px solid #EBC3BA}
+.alert.info{background:var(--jasna);color:var(--zielen);border:1px solid #C3DCCB}
+.ekran{text-align:center;padding:38px 20px}
+.ekran .ikona{width:64px;height:64px;border-radius:50%;background:var(--jasna);display:grid;place-items:center;margin:0 auto 14px}
+.ekran h2{margin:0 0 8px;font-size:21px;color:var(--zielen)}
+.ekran p{margin:0 auto;max-width:440px;color:var(--szary)}
+.link-tekst{background:none;border:0;color:var(--zielen2);text-decoration:underline;cursor:pointer;font-size:13px;margin-top:14px;padding:4px}
+.ukryte{display:none!important}
+@media (min-width:640px){
+  .naglowek h1{font-size:26px}
+  .logo{height:26px}
+  .karta{padding:22px 24px}
+}

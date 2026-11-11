@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#006241">
+<title>Wyniki ankiety: planogramy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styl.css">
+<link rel="stylesheet" href="/panel.css">
+</head>
+<body>
+<header class="naglowek">
+  <div class="naglowek-in szeroki">
+    <img class="logo" src="/logo.svg" alt="STALCO">
+    <h1>Wyniki ankiety: planogramy</h1>
+    <p>Panel dla Działu Wizualizacji i Rozwoju Sieci · liczy się na żywo z bazy</p>
+  </div>
+</header>
+
+<main class="tresc szeroki">
+  <div id="alert" class="alert" role="alert"></div>
+
+  <section id="ekranLogin" class="karta logowanie ukryte">
+    <p class="etykieta">Logowanie do panelu</p>
+    <form id="formLogin">
+      <label for="haslo">Hasło</label>
+      <input id="haslo" type="password" autocomplete="current-password" required>
+      <button class="przycisk" type="submit" style="width:100%">Zaloguj</button>
+    </form>
+  </section>
+
+  <section id="ekranPanel" class="ukryte">
+    <div class="karta">
+      <p class="etykieta">Link do rozesłania handlowcom</p>
+      <div class="pasek-narzedzi">
+        <div class="link-box">
+          <input id="link" readonly aria-label="Link do ankiety">
+          <button class="przycisk maly" type="button" id="kopiuj">Kopiuj link</button>
+        </div>
+        <div class="przyciski">
+          <button class="przycisk maly jasny" type="button" id="odswiez">Odśwież</button>
+          <a class="przycisk maly" href="/api/eksport.csv" id="csv">Pobierz CSV do Excela</a>
+          <button class="przycisk maly jasny" type="button" id="wyloguj">Wyloguj</button>
+        </div>
+      </div>
+      <p class="legenda" id="stan" style="margin-left:0"></p>
+    </div>
+
+    <div class="kafle" id="kafle"></div>
+    <div class="kontrola" id="kontrola"></div>
+
+    <nav class="zakladki" role="tablist">
+      <button role="tab" aria-selected="true" data-z="podsumowanie">Podsumowanie</button>
+      <button role="tab" aria-selected="false" data-z="otwarte">Odpowiedzi otwarte</button>
+      <button role="tab" aria-selected="false" data-z="lista">Lista ankiet</button>
+    </nav>
+
+    <div id="z-podsumowanie"></div>
+    <div id="z-otwarte" class="ukryte"></div>
+    <div id="z-lista" class="ukryte"></div>
+  </section>
+</main>
+
+<script src="/pytania.js"></script>
+<script src="/panel.js"></script>
+</body>
+</html>

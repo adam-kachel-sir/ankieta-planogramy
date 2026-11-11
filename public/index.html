@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#006241">
+<title>Ankieta: planogramy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styl.css">
+</head>
+<body>
+<header class="naglowek">
+  <div class="naglowek-in">
+    <img class="logo" src="/logo.svg" alt="STALCO">
+    <h1>Planogramy w pracy sił sprzedaży</h1>
+    <p>Dział Wizualizacji i Rozwoju Sieci · ankieta anonimowa · ok. 7 minut</p>
+  </div>
+</header>
+
+<main class="tresc">
+  <div id="alert" class="alert" role="alert"></div>
+
+  <section id="ekranStart">
+    <div class="karta wstep">
+      Przygotowujemy szkolenie z planogramów i chcemy, żeby dotyczyło tego, co jest Ci <strong>naprawdę potrzebne w terenie</strong>.
+      Ankieta jest anonimowa: nie podajesz imienia ani maila, a odpowiedzi trafiają do wspólnego zestawienia.
+      Odpowiadaj tak, jak jest, nie tak, jak powinno być.
+    </div>
+    <form id="formularz" novalidate></form>
+  </section>
+
+  <section id="ekranKoniec" class="karta ekran ukryte" aria-live="polite">
+    <div class="ikona"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#006241" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2>Dziękujemy, ankieta wysłana</h2>
+    <p>Twoje odpowiedzi trafiły do zestawienia. Wyniki posłużą do ułożenia programu szkolenia i poprawy karty planogramu.</p>
+  </section>
+
+  <section id="ekranJuz" class="karta ekran ukryte">
+    <h2>Ankieta z tego urządzenia została już wysłana</h2>
+    <p>Dziękujemy. Jeśli na tym telefonie wypełnia ją ktoś inny, możesz otworzyć pusty formularz.</p>
+    <button type="button" class="link-tekst" id="nowyFormularz">Otwórz pusty formularz</button>
+  </section>
+
+  <section id="ekranStop" class="karta ekran ukryte">
+    <h2 id="stopTytul">Ankieta jest zamknięta</h2>
+    <p id="stopTekst">Dziękujemy za zainteresowanie.</p>
+  </section>
+</main>
+
+<div class="pasek-dol" id="pasekDol">
+  <div class="pasek-dol-in">
+    <div class="postep">
+      <div class="postep-txt" id="postepTxt">Odpowiedzi: 0 z 0</div>
+      <div class="postep-tor"><div class="postep-wyp" id="postepWyp"></div></div>
+    </div>
+    <button type="button" class="przycisk" id="wyslij">Wyślij ankietę</button>
+  </div>
+</div>
+
+<script src="/pytania.js"></script>
+<script src="/ankieta.js"></script>
+</body>
+</html>
