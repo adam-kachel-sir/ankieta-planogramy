@@ -155,13 +155,55 @@
     el('z-otwarte').innerHTML = h;
   }
 
+  /* Pełna treść jednej ankiety — tak, jak wypełnił ją handlowiec */
+  function odpowiedzTekst(q, v) {
+    if (q.typ === 'skala') {
+      if (v === A.SKALA.nd) return { t: A.SKALA.ndTekst };
+      return { t: v + ' — ' + A.SKALA.etykiety[v - 1], ocena: q.odwrocone ? 'pytanie odwrócone: po przeliczeniu ' + (7 - v) : '' };
+    }
+    if (q.typ === 'test') {
+      var o = q.opcje.filter(function (x) { return x.w === v; })[0];
+      return { t: v + ') ' + (o ? o.t : ''), test: v === q.poprawna };
+    }
+    if (Array.isArray(v)) return { t: v.join('\n') };
+    return { t: String(v) };
+  }
+
+  function szczegoly(w) {
+    var h = '<div class="szczegoly"><div class="szcz-nag">Ankieta nr ' + w.id + ' · wysłana ' + data(w.utworzono) + '</div>';
+    A.SEKCJE.forEach(function (s) {
+      var pyt = A.PYTANIA.filter(function (q) { return q.s === s.id; });
+      h += '<div class="szcz-sekcja">' + s.id + ' · ' + esc(s.tytul) + '</div>';
+      pyt.forEach(function (q) {
+        var v = w.dane[q.id], tresc, klasa = '';
+        if (!A.widoczne(q, w.dane)) {
+          tresc = '<span class="szcz-pom">' + (q.tylkoNieKorzystam ? 'nie dotyczy — ta osoba korzysta z planogramów' : 'pominięte — ta osoba nie korzysta z planogramów') + '</span>';
+        }
+        else if (v === undefined || v === null || v === '') { tresc = '<span class="szcz-pom">brak odpowiedzi</span>'; }
+        else {
+          var o = odpowiedzTekst(q, v);
+          tresc = esc(o.t);
+          if (o.ocena) tresc += '<div class="szcz-meta">' + esc(o.ocena) + '</div>';
+          if (o.test === true) { klasa = ' ok'; tresc += '<div class="szcz-meta">✓ odpowiedź prawidłowa</div>'; }
+          if (o.test === false) { klasa = ' zle'; tresc += '<div class="szcz-meta">✗ prawidłowa: „' + q.poprawna + '”</div>'; }
+        }
+        h += '<div class="szcz-wiersz' + klasa + '"><div class="szcz-pyt"><b>' + q.id + '</b> ' + esc(q.tekst) + '</div><div class="szcz-odp">' + tresc + '</div></div>';
+      });
+    });
+    return h + '</div>';
+  }
+
+  var otwarta = null;
   function lista() {
-    var h = '<div class="blok"><h3>Wszystkie ankiety</h3><p class="pod">Usuń tylko ankiety testowe — usunięcia nie da się cofnąć.</p><div class="tabela-wrap"><table>' +
-      '<tr><th>Nr</th><th>Data</th><th>Rola</th><th>Częstotliwość</th><th>Wdrożenia</th><th></th></tr>';
-    if (!wiersze.length) h += '<tr><td colspan="6" class="lewy pusto">Brak ankiet.</td></tr>';
+    var h = '<div class="blok"><h3>Wszystkie ankiety</h3><p class="pod">Kliknij <b>Pokaż</b>, żeby zobaczyć ankietę w całości. Usuń tylko ankiety testowe — usunięcia nie da się cofnąć.</p><div class="tabela-wrap"><table>' +
+      '<tr><th>Nr</th><th>Data</th><th>Rola</th><th>Częstotliwość</th><th>Wdrożenia</th><th></th><th></th></tr>';
+    if (!wiersze.length) h += '<tr><td colspan="7" class="lewy pusto">Brak ankiet.</td></tr>';
     wiersze.slice().reverse().forEach(function (w) {
-      h += '<tr><td class="lewy" style="min-width:0">' + w.id + '</td><td>' + data(w.utworzono) + '</td><td>' + esc(w.dane.A1) + '</td><td>' + esc(w.dane.A2) + '</td><td>' + esc(w.dane.A3 || '—') + '</td>' +
+      var jest = otwarta === w.id;
+      h += '<tr' + (jest ? ' class="aktywny"' : '') + '><td class="lewy" style="min-width:0">' + w.id + '</td><td>' + data(w.utworzono) + '</td><td>' + esc(w.dane.A1) + '</td><td>' + esc(w.dane.A2) + '</td><td>' + esc(w.dane.A3 || '—') + '</td>' +
+        '<td><button class="pokaz" type="button" data-id="' + w.id + '">' + (jest ? 'Zwiń' : 'Pokaż') + '</button></td>' +
         '<td><button class="usun" type="button" data-id="' + w.id + '">Usuń</button></td></tr>';
+      if (jest) h += '<tr class="szcz-tr"><td colspan="7">' + szczegoly(w) + '</td></tr>';
     });
     h += '</table></div></div>';
     el('z-lista').innerHTML = h;
@@ -220,6 +262,8 @@
   });
 
   el('z-lista').addEventListener('click', function (e) {
+    var p = e.target.closest('.pokaz');
+    if (p) { var id = Number(p.getAttribute('data-id')); otwarta = otwarta === id ? null : id; lista(); return; }
     var b = e.target.closest('.usun');
     if (!b) return;
     if (!b.classList.contains('potwierdz')) {

@@ -23,7 +23,8 @@
     { id: 'H', tytul: 'Twoje propozycje', obszar: '6. Propozycje usprawnień i uwagi' }
   ];
 
-  var ROLE = ['PH rynku tradycyjnego', 'KAM SPG', 'Specjalista obsługi PSB', 'Handlowiec dywizji', 'RM', 'Inna'];
+  /* Struktura obecna (przed nominacjami RM): przedstawiciel handlowy, koordynator, dyrektor + pozostałe role */
+  var ROLE = ['Przedstawiciel handlowy (PH)', 'Koordynator', 'Dyrektor', 'KAM SPG', 'Specjalista obsługi PSB', 'Handlowiec dywizji', 'Inna'];
   var CZESTOTLIWOSC = ['Kilka razy w tygodniu', 'Kilka razy w miesiącu', 'Rzadziej', NIE_KORZYSTAM];
   var WDROZENIA = ['0', '1–2', '3–5', '6–10', 'Powyżej 10'];
   var KONTROLA = ['We wszystkich', 'W części', 'W żadnym', 'Nie dotyczy'];

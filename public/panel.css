@@ -43,6 +43,20 @@ tr.obszar td{font-weight:700}
 .pusto{color:var(--szary);font-size:13px;padding:6px 2px}
 .usun{border:1px solid #E3B7AE;background:#fff;color:var(--blad);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer}
 .usun.potwierdz{background:var(--blad);color:#fff}
+.pokaz{border:1px solid #B9D7C4;background:#fff;color:var(--zielen);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer}
+tr.aktywny td{background:var(--jasna)}
+tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
+.szczegoly{padding:14px 16px 18px;background:#FAFCFB}
+.szcz-nag{font-weight:700;color:var(--zielen);margin-bottom:6px}
+.szcz-sekcja{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--zielen2);margin:14px 0 6px}
+.szcz-wiersz{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;padding:8px 10px;border:1px solid var(--linia);border-radius:10px;background:#fff;margin-bottom:6px;font-size:13px}
+.szcz-wiersz.ok{border-color:#9FD3B2;background:#F1FAF4}
+.szcz-wiersz.zle{border-color:#EBC3BA;background:#FDF4F2}
+.szcz-pyt b{color:var(--zielen)}
+.szcz-odp{font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere}
+.szcz-meta{font-weight:400;font-size:11.5px;color:var(--szary);margin-top:2px}
+.szcz-pom{font-weight:400;color:var(--szary);font-style:italic}
+@media (max-width:640px){.szcz-wiersz{grid-template-columns:1fr;gap:4px}}
 .logowanie{max-width:380px;margin:30px auto}
 .logowanie input{width:100%;border:1.5px solid var(--linia);border-radius:10px;padding:12px;font-size:16px;margin:8px 0 12px}
 @media (max-width:560px){.r-wiersz{grid-template-columns:minmax(0,1fr) 70px 56px}}
