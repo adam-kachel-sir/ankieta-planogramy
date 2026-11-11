@@ -67,6 +67,7 @@ tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
 .stopka-panel{font-size:12px;color:var(--szary);margin:28px 2px 0;text-align:right}
 .stopka-panel a{color:var(--szary)}
 .druk-naglowek{display:none}
+.druk-tytul{display:none}
 
 /* ---------- wydruk podsumowania (A4) ---------- */
 @page{size:A4;margin:15mm 14mm 16mm}
@@ -81,7 +82,16 @@ tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
   .naglowek h1{font-size:19px;letter-spacing:.01em}
   .naglowek p{font-size:10px;opacity:.9}
   .tresc,.tresc.szeroki{max-width:none;padding:0}
-  #ekranPanel > .karta,.zakladki,#z-otwarte,#z-lista,.stopka-panel,#alert,#ekranLogin{display:none!important}
+  #ekranPanel > .karta,.zakladki,#z-lista,.stopka-panel,#alert,#ekranLogin{display:none!important}
+  /* załącznik: odpowiedzi otwarte od nowej strony */
+  #z-otwarte{display:block!important;break-before:page}
+  .druk-tytul{display:block;font-size:15px;color:var(--zielen);margin:0 0 4px;padding-bottom:7px;border-bottom:2px solid var(--zielen)}
+  .blok-otwarte{break-inside:auto;margin:14px 0 18px}
+  .blok-otwarte h3{font-size:11.5px;border-bottom:1px solid var(--linia);color:var(--tekst)}
+  .otwarte-lista{gap:6px}
+  .otwarta{padding:7px 10px;border-radius:8px;font-size:10px;line-height:1.45;break-inside:avoid}
+  .otwarta .meta{font-size:8.5px;margin-bottom:2px}
+  .pusto{font-size:9.5px;padding:0}
   #z-podsumowanie{display:flex!important;flex-direction:column}
   .b-obszary{order:1} .b-test{order:2} .b-pytania{order:3} .rozklady{order:4}
   .druk-naglowek{display:flex;justify-content:space-between;font-size:10.5px;color:var(--szary);margin:14px 4px 14px}

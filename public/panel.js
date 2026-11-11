@@ -148,11 +148,11 @@
   }
 
   function otwarte() {
-    var h = '';
+    var h = '<h2 class="druk-tytul">Załącznik · odpowiedzi otwarte</h2>';
     ['F2', 'G2', 'H1'].forEach(function (id) {
       var q = A.pytanie(id);
       var lista = wiersze.filter(function (w) { return typeof w.dane[id] === 'string' && w.dane[id].trim(); });
-      h += '<div class="blok"><h3>' + id + ' · ' + esc(q.tekst) + '</h3><p class="pod">Odpowiedzi: ' + lista.length + '</p><div class="otwarte-lista">';
+      h += '<div class="blok blok-otwarte"><h3>' + id + ' · ' + esc(q.tekst) + '</h3><p class="pod">Odpowiedzi: ' + lista.length + '</p><div class="otwarte-lista">';
       if (!lista.length) h += '<p class="pusto">Brak odpowiedzi.</p>';
       lista.slice().reverse().forEach(function (w) {
         h += '<div class="otwarta"><div class="meta">Ankieta nr ' + w.id + ' · ' + esc(w.dane.A1 || '') + ' · ' + data(w.utworzono) + '</div>' + esc(w.dane[id]) + '</div>';
