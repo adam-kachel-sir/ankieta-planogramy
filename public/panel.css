@@ -28,6 +28,13 @@ td{padding:8px 10px;border-top:1px solid var(--linia);text-align:center;white-sp
 td:first-child{text-align:left;white-space:normal;min-width:260px}
 td.lewy{text-align:left}
 tr.obszar td{font-weight:700}
+/* tabele podsumowania: równe kolumny ról, nagłówki w dwóch liniach zamiast rozpychania kolumn */
+.b-obszary table,.b-pytania table,.b-test table{table-layout:fixed;min-width:760px}
+.b-obszary th,.b-pytania th,.b-test th{white-space:normal;line-height:1.25;height:52px;vertical-align:middle}
+.b-obszary th:first-child,.b-test th:first-child{width:38%}
+.b-pytania th:first-child{width:38%}
+.b-pytania th:nth-child(3),.b-pytania th:nth-child(4){width:5.5%}
+.b-obszary td,.b-pytania td,.b-test td{white-space:normal}
 .c-ok{background:var(--ok-tlo)} .c-uwaga{background:var(--uwaga-tlo)} .c-zle{background:var(--zle-tlo)}
 .odwr{display:inline-block;font-size:10.5px;font-weight:700;color:#8A5A00;background:#FFF1C7;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
 .legenda{font-size:12px;color:var(--szary);margin:8px 2px 0}
