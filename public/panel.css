@@ -74,6 +74,8 @@ tr.szcz-tr td{padding:0;white-space:normal;text-align:left;min-width:0}
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html,body{background:#fff}
+  /* na wydruku tylko panel: elementy dokładane przez rozszerzenia przeglądarki (ikonki, przyciski) są ukrywane */
+  html > :not(head):not(body), body > :not(header):not(main){display:none!important}
   body{font-size:10.5px;line-height:1.45}
   /* nagłówek: zielona karta z oddechem wokół logo */
   .naglowek{border-radius:12px;overflow:hidden}
