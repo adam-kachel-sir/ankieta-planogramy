@@ -39,10 +39,10 @@
     'Nie widzę, co mi to daje (wynik, prowizja, oszczędność czasu).',
     'Nic mi nie przeszkadza.'];
   var BARIERY_KLUCZ = [
-    { przyczyna: 'Nie wie, CO robić (cel)', reakcja: 'Cel i standard: ile konceptów, w jakich punktach, w jakim czasie', kto: 'RM + Dział Wizualizacji' },
+    { przyczyna: 'Nie wie, CO robić (cel)', reakcja: 'Cel i standard: ile konceptów, w jakich punktach, w jakim czasie', kto: 'Koordynator + Dział Wizualizacji' },
     { przyczyna: 'Nie może (warunki)', reakcja: 'Usunięcie przeszkody: dostęp, towar, montaż', kto: 'Dział Wizualizacji, logistyka, IT' },
     { przyczyna: 'Nie umie (kompetencja)', reakcja: 'Szkolenie i coaching w terenie', kto: 'Szkolenie z planogramów' },
-    { przyczyna: 'Nie chce (motywacja)', reakcja: 'Rozmowa o powodzie i o systemie premiowym', kto: 'Dyrektor sprzedaży, RM' },
+    { przyczyna: 'Nie chce (motywacja)', reakcja: 'Rozmowa o powodzie i o systemie premiowym', kto: 'Dyrektor handlowy, koordynator' },
     { przyczyna: 'Brak bariery', reakcja: '—', kto: '—' }];
   var TEMATY = ['Czytanie karty konceptu', 'Dobór konceptu do punktu', 'Rozmowa z właścicielem o regale',
     'Kontrola zgodności półki', 'Szkolenie sprzedawców w punkcie', 'Liczenie efektu sprzedaży po wdrożeniu', 'Inne'];

@@ -12,7 +12,7 @@ Postawione pod Railway (hosting) z kodem w GitHubie.
 
 ### 1. GitHub — wgranie plików
 1. Wejdź na github.com i zaloguj się.
-2. Prawy górny róg: **+** → **New repository**. Nazwa: `ankieta-planogramy`. Zaznacz **Private**. Kliknij **Create repository**.
+2. Prawy górny róg: **+** → **New repository**. Nazwa: `ankieta-planogramy`. Kliknij **Create repository**. (Repozytorium może być publiczne — w kodzie nie ma haseł ani odpowiedzi.)
 3. Na stronie nowego repozytorium kliknij link **uploading an existing file**.
 4. Rozpakuj ZIP na komputerze i przeciągnij **całą zawartość folderu** `ankieta-planogramy` (pliki i foldery `public`, `shared`, `dla-kamila`) do okna przeglądarki.
 5. Na dole kliknij **Commit changes**.

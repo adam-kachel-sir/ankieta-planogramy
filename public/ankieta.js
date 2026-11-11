@@ -167,12 +167,25 @@
     if (zapiszSzkic !== false) zapisz(KLUCZ_SZKIC, JSON.stringify(dane));
   }
 
+  /* wartość ze szkicu musi nadal istnieć w ankiecie (np. po zmianie listy ról) */
+  function wartoscOk(q, v) {
+    var o = q.opcje ? q.opcje.map(function (x) { return typeof x === 'string' ? x : x.w; }) : [];
+    if (q.typ === 'jeden' || q.typ === 'test') return typeof v === 'string' && o.indexOf(v) >= 0;
+    if (q.typ === 'skala') return v === A.SKALA.nd || (typeof v === 'number' && v >= A.SKALA.min && v <= A.SKALA.max);
+    if (q.typ === 'wiele') return Array.isArray(v) && v.every(function (x) { return o.indexOf(x) >= 0; }) && (!q.maks || v.length <= q.maks);
+    if (q.typ === 'otwarte') return typeof v === 'string';
+    return false;
+  }
+
   function wczytajSzkic() {
     var s = czytaj(KLUCZ_SZKIC);
     if (!s) return;
     try {
       var d = JSON.parse(s);
-      if (d && typeof d === 'object') dane = d;
+      if (d && typeof d === 'object') {
+        dane = {};
+        A.PYTANIA.forEach(function (q) { if (wartoscOk(q, d[q.id])) dane[q.id] = d[q.id]; });
+      }
       A.PYTANIA.forEach(function (q) {
         if (q.typ === 'otwarte' && typeof dane[q.id] === 'string') {
           var ta = el('p-' + q.id).querySelector('textarea');

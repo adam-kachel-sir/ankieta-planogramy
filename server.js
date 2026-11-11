@@ -101,6 +101,17 @@ function zaDuzo(ip) {
   return lista.length > 300;
 }
 
+/* limit błędnych logowań do panelu: 10 prób na 15 minut z jednego adresu (tylko w pamięci) */
+const bledneLogowania = new Map();
+function zaDuzoLogowan(ip, dopisz) {
+  const teraz = Date.now(), okno = 15 * 60 * 1000;
+  const lista = (bledneLogowania.get(ip) || []).filter(t => teraz - t < okno);
+  if (dopisz) lista.push(teraz);
+  bledneLogowania.set(ip, lista);
+  if (bledneLogowania.size > 5000) bledneLogowania.clear();
+  return lista.length >= 10;
+}
+
 /* ---------- strony ---------- */
 app.get('/pytania.js', (req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'shared', 'pytania.js')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
@@ -134,8 +145,10 @@ app.get('/api/sesja', (req, res) => res.json({ zalogowany: zalogowany(req), hasl
 
 app.post('/api/login', async (req, res) => {
   if (!HASLO) return res.status(503).json({ blad: 'Hasło panelu nie jest ustawione (zmienna PANEL_HASLO).' });
+  if (zaDuzoLogowan(req.ip, false)) return res.status(429).json({ blad: 'Zbyt wiele błędnych prób. Spróbuj ponownie za 15 minut.' });
   const haslo = (req.body && req.body.haslo) || '';
   if (!rowne(haslo, HASLO)) {
+    zaDuzoLogowan(req.ip, true);
     await new Promise(r => setTimeout(r, 700));
     return res.status(401).json({ blad: 'Nieprawidłowe hasło.' });
   }
